@@ -13,16 +13,36 @@ import java.util.stream.IntStream;
 public class Matrix {
 	
 	/**
-	 * 
-	 * @post | 0 <= result
+	 * @invar | 0 <= aantalRijen
+	 * @invar | 0 <= aantalKolommen
+	 * @invar | elementenRowMajor != null
+	 * @invar | elementenRowMajor.length == aantalRijen * aantalKolommen 
 	 */
-	public int getAantalRijen() {throw new RuntimeException("Not yet implemented");}
+	
+	private int aantalRijen;
+	
+	
+	private int aantalKolommen;
+	
+	/**
+	 * @representationObject
+	 */
+	private double[] elementenRowMajor;
+	
+	
+	
 	
 	/**
 	 * 
 	 * @post | 0 <= result
 	 */
-	public int getAantalKolommen() {throw new RuntimeException("Not yet implemented");}
+	public int getAantalRijen() {return aantalRijen;}
+	
+	/**
+	 * 
+	 * @post | 0 <= result
+	 */
+	public int getAantalKolommen() {return aantalKolommen;}
 	
 	
 	/**
@@ -37,7 +57,15 @@ public class Matrix {
 	 * @creates | result,...result	//Bij getRijen is niet alleen de return value een object maar ook de elementen van de return value zijn objecten
 	 * 								// en die worden ook aangemaakt door de methode
 	 */
-	public double [][] getRijen() {throw new RuntimeException("Not yet implemented");} // [][] want array van arrays, waarbij elke rij een array is
+	public double [][] getRijen() {
+		double [][] result = new double[aantalRijen][aantalKolommen];
+		for (int rijIndex = 0; rijIndex < aantalRijen; rijIndex ++)
+			for (int kolomIndex = 0; kolomIndex < aantalKolommen; kolomIndex ++)
+				result[rijIndex][kolomIndex] = elementenRowMajor[rijIndex * aantalKolommen + kolomIndex];
+	
+	
+	
+	} // [][] want array van arrays, waarbij elke rij een array is
 	// deze inspector gaan we gebruiken als "BASISINSPECTOR" gebruiken om te vermijden dat we lussen krijgen
 	
 	

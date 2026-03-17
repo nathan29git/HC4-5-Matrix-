@@ -31,5 +31,38 @@ class MatrixTest {
 		assertArrayEquals(new double[] {100, 400, 200, 500, 300, 600}, scaledMatrix.getElementenColumnMajor());
 	
 	}
+	
+	@Test
+	void testPlus() {
+		Matrix som = myMatrix.plus(myMatrix);
+		assertEquals(2, som.getAantalRijen());
+		assertEquals(3, som.getAantalKolommen());
+		assertArrayEquals(new double[] {20, 40, 60, 80, 100, 120}, som.getElementenRowMajor());
+		assertArrayEquals(new double[] {20, 80, 40, 100, 60, 120}, som.getElementenColumnMajor());
+	
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 }
