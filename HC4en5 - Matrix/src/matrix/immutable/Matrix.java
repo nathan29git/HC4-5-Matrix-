@@ -62,7 +62,7 @@ public class Matrix {
 		for (int rijIndex = 0; rijIndex < aantalRijen; rijIndex ++)
 			for (int kolomIndex = 0; kolomIndex < aantalKolommen; kolomIndex ++)
 				result[rijIndex][kolomIndex] = elementenRowMajor[rijIndex * aantalKolommen + kolomIndex];
-	
+		return result;
 	
 	
 	} // [][] want array van arrays, waarbij elke rij een array is
@@ -75,7 +75,10 @@ public class Matrix {
 	 * @pre | 0 <= kolomIndex && kolomIndex < getAantalKolommen()
 	 * @post | result == getRijen()[rijIndex][kolomIndex]
 	 */
-	public int getElement(int rijIndex, int kolomIndex) {throw new RuntimeException("Not yet implemented");}
+	public double getElement(int rijIndex, int kolomIndex) {
+		return elementenRowMajor[rijIndex * aantalKolommen + kolomIndex];
+		
+	}
 	
 	
 	/**
@@ -87,7 +90,9 @@ public class Matrix {
 	 * @post | IntStream.range(0, getAantalRijen()).allMatch(rijIndex -> IntStream.range(0, getAantalKolommen()).allMatch(kolomIndex -> 
 	 * 		 |		result[rijIndex * getAantalKolommen() + kolomIndex] == getElement(rijIndex,kolomIndex)))
 	 */
-	public double[] getElementenRowMajor() {throw new RuntimeException("Not yet implemented");}
+	public double[] getElementenRowMajor() {
+		return elementenRowMajor.clone();
+	}
 	
 	/**
 	 * 
@@ -98,7 +103,13 @@ public class Matrix {
 	 * @post | IntStream.range(0, getAantalRijen()).allMatch(rijIndex -> IntStream.range(0, getAantalKolommen()).allMatch(kolomIndex -> 
 	 * 		 |		result[kolomIndex * getAantalRijen() + rijIndex] == getElement(rijIndex,kolomIndex)))
 	 */
-	public double[] getElementenColumnMajor() {throw new RuntimeException("Not yet implemented");}
+	public double[] getElementenColumnMajor() {
+		double[] result = new double[aantalRijen * aantalKolommen];
+		for (int rijIndex = 0; rijIndex < aantalRijen; rijIndex ++)
+			for (int kolomIndex = 0; kolomIndex < aantalKolommen; kolomIndex ++)
+				result[kolomIndex * aantalRijen + rijIndex] = elementenRowMajor[rijIndex * aantalKolommen + kolomIndex];
+		return result;
+	}
 	
 	
 	
@@ -116,8 +127,16 @@ public class Matrix {
 	 *
 	 * 
 	 */
-	public Matrix (int aantalRijen, int aantalKolommen, double[] elementenRowMajor)
-		{throw new RuntimeException("Not yet implemented");}
+	public Matrix (int aantalRijen, int aantalKolommen, double[] elementenRowMajor) {
+		this.aantalRijen = aantalRijen;
+		this.aantalKolommen = aantalKolommen;
+		this.elementenRowMajor = elementenRowMajor.clone(); //LET HIER OP VOOR REPRESEN
+		
+		
+		
+		
+		
+		}
 	
 	
 	
@@ -135,7 +154,12 @@ public class Matrix {
 	 * 		 |		result.getElement(rijIndex, kolomIndex) == factor * getElement(rijIndex,kolomIndex)))
 	 * 
 	 */
-	public Matrix scaled(double factor) {throw new RuntimeException("Not yet implemented");}
+	public Matrix scaled(double factor) {
+		double[] scaledElementenRowMajor = new double[elementenRowMajor.length];
+		for (int i = 0; i < elementenRowMajor.length; i++)
+			scaledElementenRowMajor[i] = factor * elementenRowMajor[i];
+		return new Matrix(aantalRijen, aantalKolommen, scaledElementenRowMajor);
+	}
 	
 	
 	
@@ -154,9 +178,13 @@ public class Matrix {
 	 * 		 |		result.getElement(rijIndex, kolomIndex) == getElement(rijIndex,kolomIndex) + other.getElement(rijIndex, kolomIndex)))
 	 * 
 	 */
-	public Matrix plus(Matrix other) {throw new RuntimeException("Not yet implemented");}
+	public Matrix plus(Matrix other) {
 	
-	
+		double[] som = new double[elementenRowMajor.length];
+		for (int i = 0; i < elementenRowMajor.length; i++)
+			som[i] = elementenRowMajor[i] + other.elementenRowMajor[i];
+		return new Matrix(aantalRijen, aantalKolommen, som);
+}
 	
 	
 	
