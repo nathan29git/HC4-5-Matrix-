@@ -14,8 +14,9 @@ public class Matrix {
 	/**
 	 * @invar | 0 <= aantalRijen
 	 * @invar | 0 <= aantalKolommen
-	 * @invar | elementenRowMajor != null
-	 * @invar | elementenRowMajor.length == aantalRijen * aantalKolommen 
+	 * 
+	 * @invar | rijen != null
+	 * @invar | Arrays.stream(rijen).allMatch(rij -> rij != null && rij.length == aantalKolommen)
 	 */
 	
 	private int aantalRijen;
@@ -26,7 +27,7 @@ public class Matrix {
 	/**
 	 * @representationObject
 	 */
-	private double[] elementenRowMajor;
+	private double[][] rijen;	//dit is de nieuwe interne structuur !
 	
 	
 	
@@ -60,9 +61,11 @@ public class Matrix {
 	 */
 	public double [][] getRijen() {
 		double [][] result = new double[aantalRijen][aantalKolommen];
-		for (int rijIndex = 0; rijIndex < aantalRijen; rijIndex ++)
-			for (int kolomIndex = 0; kolomIndex < aantalKolommen; kolomIndex ++)
-				result[rijIndex][kolomIndex] = elementenRowMajor[rijIndex * aantalKolommen + kolomIndex];
+		
+		// DEEP COPY: We moeten zowel de buitenste als de binnenste arrays nieuw maken!
+		for (int r = 0; r < aantalRijen; r++) {
+			result[r] = this.rijen[r].clone(); // Clone per rij, voorkomt Representation Exposure!
+		}
 		return result;
 	
 	
@@ -77,7 +80,7 @@ public class Matrix {
 	 * @post | result == getRijen()[rijIndex][kolomIndex]
 	 */
 	public double getElement(int rijIndex, int kolomIndex) {
-		return elementenRowMajor[rijIndex * aantalKolommen + kolomIndex];
+		return rijen[rijIndex][kolomIndex];	//is simpel nu we een 2D array hebben
 		
 	}
 	
@@ -92,7 +95,13 @@ public class Matrix {
 	 * 		 |		result[rijIndex * getAantalKolommen() + kolomIndex] == getElement(rijIndex,kolomIndex)))
 	 */
 	public double[] getElementenRowMajor() {
-		return elementenRowMajor.clone();
+		double[] result = new double[aantalRijen * aantalKolommen];
+		for (int r = 0; r < aantalRijen; r++) {
+			for (int c = 0; c < aantalKolommen; c++) {
+				result[r * aantalKolommen + c] = rijen[r][c];
+			}
+		}
+		return result;
 	}
 	
 	/**
@@ -106,9 +115,11 @@ public class Matrix {
 	 */
 	public double[] getElementenColumnMajor() {
 		double[] result = new double[aantalRijen * aantalKolommen];
-		for (int rijIndex = 0; rijIndex < aantalRijen; rijIndex ++)
-			for (int kolomIndex = 0; kolomIndex < aantalKolommen; kolomIndex ++)
-				result[kolomIndex * aantalRijen + rijIndex] = elementenRowMajor[rijIndex * aantalKolommen + kolomIndex];
+		for (int r = 0; r < aantalRijen; r++) {
+			for (int c = 0; c < aantalKolommen; c++) {
+				result[c * aantalRijen + r] = rijen[r][c];
+			}
+		}
 		return result;
 	}
 	
@@ -131,13 +142,20 @@ public class Matrix {
 	public Matrix (int aantalRijen, int aantalKolommen, double[] elementenRowMajor) {
 		this.aantalRijen = aantalRijen;
 		this.aantalKolommen = aantalKolommen;
-		this.elementenRowMajor = elementenRowMajor.clone(); //LET HIER OP VOOR REPRESEN
 		
-		
-		
-		
-		
+		// Vertaal de 1D input array naar onze interne 2D array!
+		this.rijen = new double[aantalRijen][aantalKolommen];
+		for(int r = 0; r < aantalRijen; r++) {
+			for(int c = 0; c < aantalKolommen; c++) {
+				this.rijen[r][c] = elementenRowMajor[r * aantalKolommen + c];
+			}
 		}
+		
+		
+		
+		
+		
+	}
 	
 	
 	
@@ -159,10 +177,13 @@ public class Matrix {
 	 * 
 	 */
 	public void  scale(double factor) {
-		for (int i = 0; i < elementenRowMajor.length; i++)
-			elementenRowMajor[i] = factor * elementenRowMajor[i];
+		for (int r = 0; r < aantalRijen; r++) {
+			for (int c = 0; c < aantalKolommen; c++) {
+				rijen[r][c] *= factor;
+			}
+			
+		}
 		
-		//heel belangrijk om een nieuwe matrix te returnen
 	}
 	
 	
@@ -178,9 +199,13 @@ public class Matrix {
 	 */
 	public void add(Matrix other) {
 	
-		for (int i = 0; i < elementenRowMajor.length; i++)
-			elementenRowMajor[i] = elementenRowMajor[i] + other.elementenRowMajor[i];
-}
+		for (int r = 0; r < aantalRijen; r++) {
+			for (int c = 0; c < aantalKolommen; c++) {
+				rijen[r][c] += other.rijen[r][c];
+			}
+			
+		}
+	}
 	
 	
 	
