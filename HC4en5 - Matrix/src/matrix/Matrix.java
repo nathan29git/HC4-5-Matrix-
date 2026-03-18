@@ -8,7 +8,6 @@ import java.util.stream.IntStream;
  * 										// dus je kan over elk object nadenken alsof het een specifieke matrix voorstelt.
  * 
  * 
- * @immutable 	//vandaar dat er geen mutatoren zijn!
  */
 public class Matrix {
 	
