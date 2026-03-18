@@ -11,15 +11,47 @@ import java.util.stream.IntStream;
  */
 public class Matrix {
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
-	 * @post | 0 <= result
+	 * @invar | 0 <= aantalRijen
+	 * @invar | 0 <= aantalKolommen
+	 * @invar | elementenColumnMajor != null
+	 * @invar | elementenColumnMajor.length == aantalRijen * aantalKolommen 
 	 */
-	public int getAantalRijen() { throw new RuntimeException("Not yet implemented"); }
+	
+	
+	
+	
+	
+	
+	private int aantalRijen;
+	private int aantalKolommen;
+	
+	/**
+	 * @representationObject
+	 */
+	private double[] elementenColumnMajor;
+	
+	
+	
 	
 	/**
 	 * @post | 0 <= result
 	 */
-	public int getAantalKolommen() { throw new RuntimeException("Not yet implemented"); }
+	public int getAantalRijen() {return aantalRijen;}
+	
+	/**
+	 * @post | 0 <= result
+	 */
+	public int getAantalKolommen() {return aantalKolommen;}
 	
 	/**
 	 * @post | result != null
@@ -30,14 +62,28 @@ public class Matrix {
 	 * @creates | result, ...result			//Bij getRijen is niet alleen de return value een object maar ook de elementen van de return value zijn objecten
 	 * 								// en die worden ook aangemaakt door de methode
 	 */
-	public double[][] getRijen() { throw new RuntimeException("Not yet implemented"); }
+	public double[][] getRijen() { 
+		double [][] result = new double[aantalRijen][aantalKolommen];
+		for (int rijIndex = 0; rijIndex < aantalRijen; rijIndex ++)
+			for (int kolomIndex = 0; kolomIndex < aantalKolommen; kolomIndex ++)
+				result[rijIndex][kolomIndex] = elementenColumnMajor[kolomIndex * aantalRijen + rijIndex];
+		return result;
+	
+	
+	} // [][] want array van arrays, waarbij elke rij een array is
+	// deze inspector gaan we gebruiken als "BASISINSPECTOR" gebruiken om te vermijden dat we lussen krijgen
 	
 	/**
 	 * @pre | 0 <= rijIndex && rijIndex < getAantalRijen()
 	 * @pre | 0 <= kolomIndex && kolomIndex < getAantalKolommen()
 	 * @post | result == getRijen()[rijIndex][kolomIndex]
 	 */
-	public double getElement(int rijIndex, int kolomIndex) { throw new RuntimeException("Not yet implemented"); }
+	public double getElement(int rijIndex, int kolomIndex) { 
+		// DE NIEUWE WISKUNDE: Spring per kolom in plaats van per rij
+				return elementenColumnMajor[kolomIndex * aantalRijen + rijIndex];
+	
+	
+	}
 	
 	/**
 	 * @creates | result
@@ -49,7 +95,20 @@ public class Matrix {
 	 *       |     )
 	 *       | )
 	 */
-	public double[] getElementenRowMajor() { throw new RuntimeException("Not yet implemented"); }
+	public double[] getElementenRowMajor() { 
+		// We moeten onze interne column-major data nu vertalen naar een row-major array voor de output
+				double[] result = new double[aantalRijen * aantalKolommen];
+				for (int rijIndex = 0; rijIndex < aantalRijen; rijIndex++) {
+					for (int kolomIndex = 0; kolomIndex < aantalKolommen; kolomIndex++) {
+						result[rijIndex * aantalKolommen + kolomIndex] = getElement(rijIndex, kolomIndex);
+					}	//bovenstaande was de formule voor elementrowmajor
+				}
+				return result;	
+	
+	
+	
+	
+	}
 	
 	/**
 	 * @creates | result
@@ -61,7 +120,12 @@ public class Matrix {
 	 *       |     )
 	 *       | )
 	 */
-	public double[] getElementenColumnMajor() { throw new RuntimeException("Not yet implemented"); }
+	public double[] getElementenColumnMajor() {
+		// Omdat we intern ALLES al in column major hebben staan, is dit nu super simpel!
+				return elementenColumnMajor.clone();
+			}
+	
+	
 	
 	/**
 	 * @pre | 0 <= aantalRijen
@@ -74,7 +138,16 @@ public class Matrix {
 	 * @post | Arrays.equals(getElementenRowMajor(), elementenRowMajor)
 	 */
 	public Matrix(int aantalRijen, int aantalKolommen, double[] elementenRowMajor) {
-		throw new RuntimeException("Not yet implemented");
+		this.aantalRijen = aantalRijen;
+		this.aantalKolommen = aantalKolommen;
+		
+		// De klant geeft row-major mee, maar wij vertalen het direct naar onze interne column-major opslag!
+		this.elementenColumnMajor = new double[aantalRijen * aantalKolommen];
+		for (int rijIndex = 0; rijIndex < aantalRijen; rijIndex++) {
+			for (int kolomIndex = 0; kolomIndex < aantalKolommen; kolomIndex++) {
+				this.elementenColumnMajor[kolomIndex * aantalRijen + rijIndex] = elementenRowMajor[rijIndex * aantalKolommen + kolomIndex];
+			}
+		}
 	}
 	
 	/**
@@ -89,7 +162,17 @@ public class Matrix {
 	 *       |     )
 	 *       | )
 	 */
-	public Matrix scaled(double factor) { throw new RuntimeException("Not yet implemented"); }
+	public Matrix scaled(double factor) {
+		// Onze constructor verwacht een ROW-MAJOR array, dus we bouwen eerst een geschaalde row-major array op
+				double[] scaledRowMajor = new double[aantalRijen * aantalKolommen];
+				for (int rijIndex = 0; rijIndex < aantalRijen; rijIndex++) {
+					for (int kolomIndex = 0; kolomIndex < aantalKolommen; kolomIndex++) {
+						scaledRowMajor[rijIndex * aantalKolommen + kolomIndex] = factor * getElement(rijIndex, kolomIndex);
+					}
+				}
+				return new Matrix(aantalRijen, aantalKolommen, scaledRowMajor);
+	
+	}
 	
 	/**
 	 * @pre | other != null
@@ -106,7 +189,17 @@ public class Matrix {
 	 *       |     )
 	 *       | )
 	 */
-	public Matrix plus(Matrix other) { throw new RuntimeException("Not yet implemented"); }
+	public Matrix plus(Matrix other) { 
+		// Onze constructor verwacht een ROW-MAJOR array, dus we bouwen eerst de som op als row-major array
+				double[] sumRowMajor = new double[aantalRijen * aantalKolommen];
+				for (int rijIndex = 0; rijIndex < aantalRijen; rijIndex++) {
+					for (int kolomIndex = 0; kolomIndex < aantalKolommen; kolomIndex++) {
+						sumRowMajor[rijIndex * aantalKolommen + kolomIndex] = this.getElement(rijIndex, kolomIndex) + other.getElement(rijIndex, kolomIndex);
+					}
+				}
+				return new Matrix(aantalRijen, aantalKolommen, sumRowMajor);
+	
+	}
 	
 	
 }

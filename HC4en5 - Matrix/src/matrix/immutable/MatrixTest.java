@@ -17,7 +17,7 @@ class MatrixTest {
 		assertArrayEquals( new double [] {10, 20, 30, 40, 50, 60}, myMatrix.getElementenRowMajor());
 		assertArrayEquals( new double [] {10, 40, 20, 50, 30, 60}, myMatrix.getElementenColumnMajor());
 		assertArrayEquals( new double [][] {{10, 20, 30}, {40, 50, 60}}, myMatrix.getRijen());
-		assertEquals(20, myMatrix.getElement(1,  2));
+		assertEquals(60, myMatrix.getElement(1,  2));
 		
 	}
 	
