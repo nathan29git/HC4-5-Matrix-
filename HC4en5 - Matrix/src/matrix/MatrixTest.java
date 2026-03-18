@@ -1,9 +1,11 @@
-package matrix.immutable;
+package matrix;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+
+//nu gaan we ook mutable testklasse maken
 class MatrixTest {
 
 	
@@ -23,22 +25,22 @@ class MatrixTest {
 	
 	
 	@Test
-	void testScaled() {
-		Matrix scaledMatrix = myMatrix.scaled(10);
-		assertEquals(2, scaledMatrix.getAantalRijen());
-		assertEquals(3, scaledMatrix.getAantalKolommen());
-		assertArrayEquals(new double[] {100, 200, 300, 400, 500, 600}, scaledMatrix.getElementenRowMajor());
-		assertArrayEquals(new double[] {100, 400, 200, 500, 300, 600}, scaledMatrix.getElementenColumnMajor());
+	void testScale() {
+		 myMatrix.scale(10);
+		assertEquals(2, myMatrix.getAantalRijen());
+		assertEquals(3, myMatrix.getAantalKolommen());
+		assertArrayEquals(new double[] {100, 200, 300, 400, 500, 600}, myMatrix.getElementenRowMajor());
+		assertArrayEquals(new double[] {100, 400, 200, 500, 300, 600}, myMatrix.getElementenColumnMajor());
 	
 	}
 	
 	@Test
 	void testPlus() {
-		Matrix som = myMatrix.plus(myMatrix);
-		assertEquals(2, som.getAantalRijen());
-		assertEquals(3, som.getAantalKolommen());
-		assertArrayEquals(new double[] {20, 40, 60, 80, 100, 120}, som.getElementenRowMajor());
-		assertArrayEquals(new double[] {20, 80, 40, 100, 60, 120}, som.getElementenColumnMajor());
+		myMatrix.add(myMatrix);
+		assertEquals(2, myMatrix.getAantalRijen());
+		assertEquals(3, myMatrix.getAantalKolommen());
+		assertArrayEquals(new double[] {20, 40, 60, 80, 100, 120}, myMatrix.getElementenRowMajor());
+		assertArrayEquals(new double[] {20, 80, 40, 100, 60, 120}, myMatrix.getElementenColumnMajor());
 	
 	}
 	

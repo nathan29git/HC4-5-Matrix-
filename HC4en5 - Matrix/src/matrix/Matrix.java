@@ -1,10 +1,10 @@
-package matrix.immutable;
+package matrix;
 
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
 /**
- * Elke instantie van deze klasse stelt een matrix van 'double'-waarden voor. //(we zeggen hier "stelt voor" want het is immutable,
+ * Elke instantie van deze klasse SLAAT een matrix van 'double'-waarden OP. //(we zeggen hier "stelt voor" want het is immutable,
  * 										// dus je kan over elk object nadenken alsof het een specifieke matrix voorstelt.
  * 
  * 
@@ -35,12 +35,14 @@ public class Matrix {
 	/**
 	 * 
 	 * @post | 0 <= result
+	 * @immutable
 	 */
 	public int getAantalRijen() {return aantalRijen;}
 	
 	/**
 	 * 
 	 * @post | 0 <= result
+	 * @immutable 		//het is niet omdat het een mutable versie is, dat je de inspectoren niet immutable mag maken
 	 */
 	public int getAantalKolommen() {return aantalKolommen;}
 	
@@ -146,19 +148,20 @@ public class Matrix {
 	 * 
 	 *		// neemt geen preconditie; mag je voor eender welke factor oproepen
 	 *
+	 * @mutates | this 
 	 * 
-	 * @post | result != null
-	 * @post | result.getAantalRijen() == getAantalRijen()
-	 * @post | result.getAantalKolommen() == getAantalKolommen()
+	 *    		//post | result.getAantalRijen() == old(getAantalRijen())
+	 * 			//post | result.getAantalKolommen() == old(getAantalKolommen())
+	 * 			//dees halen we weg omdat we nu de inspectoren immutable hebben gemaakt waardoor dit er impliciet uit volgt 
+	 * 
+	 * 
 	 * @post | IntStream.range(0, getAantalRijen()).allMatch(rijIndex -> IntStream.range(0, getAantalKolommen()).allMatch(kolomIndex -> 
-	 * 		 |		result.getElement(rijIndex, kolomIndex) == factor * getElement(rijIndex,kolomIndex)))
+	 * 		 |		getElement(rijIndex, kolomIndex) == factor * old(getRijen())[rijIndex][kolomIndex])) //je kunt old() niet op getElement oproepen dus je doet het op getRijen en dan buiten de old expressie indexeren!!!
 	 * 
 	 */
-	public Matrix scaled(double factor) {
-		double[] scaledElementenRowMajor = new double[elementenRowMajor.length];
+	public void  scale(double factor) {
 		for (int i = 0; i < elementenRowMajor.length; i++)
-			scaledElementenRowMajor[i] = factor * elementenRowMajor[i];
-		return new Matrix(aantalRijen, aantalKolommen, scaledElementenRowMajor);
+			elementenRowMajor[i] = factor * elementenRowMajor[i];
 		
 		//heel belangrijk om een nieuwe matrix te returnen
 	}
@@ -168,24 +171,16 @@ public class Matrix {
 	/**
 	 * 
 	 *		// neemt geen preconditie; mag je voor eender welke factor oproepen
-	 *
-	 * @pre | other != null
-	 * @pre | other.getAantalRijen() == getAantalRijen()
-	 * @pre | other.getAantalKolommen() == getAantalKolommen()
-	 * 
-	 * @post | result != null
-	 * @post | result.getAantalRijen() == getAantalRijen()
-	 * @post | result.getAantalKolommen() == getAantalKolommen()
+	 * @inspects | other //nu moet ik dit wel zeggen, vermits de matrixen nu wijzigbare objecten zijn
+	 * @mutates | this
 	 * @post | IntStream.range(0, getAantalRijen()).allMatch(rijIndex -> IntStream.range(0, getAantalKolommen()).allMatch(kolomIndex -> 
-	 * 		 |		result.getElement(rijIndex, kolomIndex) == getElement(rijIndex,kolomIndex) + other.getElement(rijIndex, kolomIndex)))
+	 * 		 |		getElement(rijIndex, kolomIndex) == old(getRijen())[rijIndex][kolomIndex] + old(other.getRijen())[rijIndex][kolomIndex]))
 	 * 
 	 */
-	public Matrix plus(Matrix other) {
+	public void add(Matrix other) {
 	
-		double[] som = new double[elementenRowMajor.length];
 		for (int i = 0; i < elementenRowMajor.length; i++)
-			som[i] = elementenRowMajor[i] + other.elementenRowMajor[i];
-		return new Matrix(aantalRijen, aantalKolommen, som);
+			elementenRowMajor[i] = elementenRowMajor[i] + other.elementenRowMajor[i];
 }
 	
 	
