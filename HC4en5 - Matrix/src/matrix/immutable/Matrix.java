@@ -159,6 +159,8 @@ public class Matrix {
 		for (int i = 0; i < elementenRowMajor.length; i++)
 			scaledElementenRowMajor[i] = factor * elementenRowMajor[i];
 		return new Matrix(aantalRijen, aantalKolommen, scaledElementenRowMajor);
+		
+		//heel belangrijk om een nieuwe matrix te returnen
 	}
 	
 	
